@@ -75,9 +75,16 @@ def CanvasAPIGet(url, extra_params={}):
             responseList.extend(result)
 
             linkCurrent = response.links["current"]
-            linkLast = response.links["last"]
+            linkNext = ""
+            try:
+                linkNext = response.links["next"]
+            except:
+                try:
+                    linkNext = response.links["last"]
+                except:
+                    linkNext = linkCurrent
 
-            if (linkCurrent["url"] == linkLast["url"]):
+            if (linkCurrent["url"] == linkNext["url"]):
                 return responseList
             pageNum += 1
 
@@ -574,9 +581,13 @@ def CommandExportRoster(filename):
                 login_id = user["login_id"]
                 if (login_id is None):
                     login_id = ""
+            sis_user_id = ""
+            if ("sis_user_id" in user):
+                sis_user_id = user["sis_user_id"]
+                if (sis_user_id is None):
+                    sis_user_id = ""
 
-
-            row = [user["sortable_name"], user["email"], user["sis_user_id"], login_id, "", userType, "", "", user["id"] ]
+            row = [user["sortable_name"], user["email"], sis_user_id, login_id, "", userType, "", "", user["id"] ]
             writer.writerow(row)
 
     print("Done!")
